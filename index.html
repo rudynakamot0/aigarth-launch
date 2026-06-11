@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIGARTH — Launch 13.04.2027 · Qubic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noir:#000000;
+    --blanc:#FFFFFF;
+    --synapse:#7DF9FF;
+    --synapse-dim:rgba(125,249,255,.35);
+    --gris:#5A5A5A;
+    --gris-clair:#9A9A9A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(ellipse 120% 70% at 50% 28%, rgba(125,249,255,0.07), transparent 60%),
+      radial-gradient(ellipse 100% 90% at 50% 0%, #10181F 0%, #070B0E 45%, #000000 100%);
+    background-attachment:fixed;
+    color:var(--blanc);
+    font-family:'Space Grotesk',sans-serif;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    touch-action:none;
+  }
+  #neural{
+    position:fixed;inset:0;
+    width:100%;height:100%;
+    z-index:0;
+  }
+  .affiche{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    padding:24px;
+    width:100%;
+    max-width:880px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    pointer-events:none;
+  }
+  .logo{
+    position:relative;
+    width:72px;height:150px;
+    margin-bottom:52px;
+  }
+  .barre{
+    position:absolute;
+    background:var(--blanc);
+    width:30px;
+  }
+  .barre.gauche{left:0;top:0;height:96px}
+  .barre.droite{right:0;top:10px;height:126px}
+  .barre.droite::after{
+    content:'';
+    position:absolute;
+    left:0;right:0;top:100%;
+    height:70px;
+    background:linear-gradient(to bottom, var(--synapse-dim), transparent);
+    animation:pulse 3.2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:.35;transform:scaleY(.7);transform-origin:top}
+    50%{opacity:1;transform:scaleY(1);transform-origin:top}
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:clamp(10px,1.4vw,12px);
+    font-weight:400;
+    letter-spacing:.6em;
+    text-indent:.6em;
+    color:var(--synapse);
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  h1{
+    font-size:clamp(56px,13vw,148px);
+    font-weight:700;
+    letter-spacing:.06em;
+    text-indent:.06em;
+    line-height:.95;
+    background:linear-gradient(180deg,#FFFFFF 55%,#9BE9F0 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .tagline{
+    margin-top:22px;
+    font-weight:300;
+    font-size:clamp(14px,2vw,19px);
+    letter-spacing:.08em;
+    color:var(--gris-clair);
+    max-width:520px;
+  }
+  .tagline strong{color:var(--blanc);font-weight:500}
+  .date-bloc{
+    margin-top:56px;
+    display:flex;
+    align-items:center;
+    gap:26px;
+  }
+  .ligne{
+    width:clamp(34px,8vw,90px);
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--gris));
+  }
+  .ligne.inv{background:linear-gradient(90deg,var(--gris),transparent)}
+  .date{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:clamp(20px,3.4vw,32px);
+    font-weight:500;
+    letter-spacing:.22em;
+    text-indent:.22em;
+    color:var(--blanc);
+  }
+  .compte{
+    margin-top:14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:clamp(10px,1.3vw,12px);
+    font-weight:300;
+    letter-spacing:.3em;
+    text-indent:.3em;
+    color:var(--synapse);
+  }
+  .hint{
+    margin-top:30px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9px;
+    letter-spacing:.35em;
+    text-indent:.35em;
+    color:var(--gris);
+    text-transform:uppercase;
+    animation:fade 4s ease-in-out infinite;
+  }
+  @keyframes fade{0%,100%{opacity:.3}50%{opacity:.8}}
+  .pied{
+    position:fixed;
+    bottom:26px;left:0;right:0;
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.32em;
+    text-indent:.32em;
+    color:var(--gris);
+    text-transform:uppercase;
+    z-index:1;
+    pointer-events:none;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .barre.droite::after{animation:none;opacity:.5}
+    .hint{animation:none;opacity:.5}
+  }
+</style>
+</head>
+<body>
+<canvas id="neural"></canvas>
+
+<main class="affiche">
+  <div class="logo" id="logoEl" aria-label="Qubic logo">
+    <div class="barre gauche"></div>
+    <div class="barre droite"></div>
+  </div>
+
+  <p class="eyebrow">Qubic presents</p>
+  <h1>AIGARTH</h1>
+  <p class="tagline">Intelligence is not programmed. It <strong>emerges</strong> — neuron by neuron, tick by tick, from the network's useful computation.</p>
+
+  <div class="date-bloc">
+    <span class="ligne inv"></span>
+    <span class="date">13.04.2027</span>
+    <span class="ligne"></span>
+  </div>
+  <p class="compte" id="compte">COMPUTING…</p>
+  <p class="hint">touch the network — make it think</p>
+</main>
+
+<div class="pied">
+  <span>uPoW</span><span>·</span><span>15.5 M TPS</span><span>·</span><span>qubic.org</span>
+</div>
+
+<script>
+/* ——— Interactive neural field emerging from the logo ——— */
+const canvas = document.getElementById('neural');
+const ctx = canvas.getContext('2d');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DPR = Math.min(devicePixelRatio || 1, 2);
+let W, H, nodes = [], ripples = [], t = 0;
+
+/* pointer state (mouse + touch) */
+const ptr = { x:-9999, y:-9999, active:false, vx:0, vy:0, px:-9999, py:-9999 };
+
+function resize(){
+  W = canvas.width = innerWidth * DPR;
+  H = canvas.height = innerHeight * DPR;
+  canvas.style.width = innerWidth+'px';
+  canvas.style.height = innerHeight+'px';
+  initNodes();
+}
+
+function logoCenter(){
+  const r = document.getElementById('logoEl').getBoundingClientRect();
+  return {x:(r.left + r.width/2)*DPR, y:(r.top + r.height/2)*DPR};
+}
+
+function initNodes(){
+  nodes = [];
+  const c = logoCenter();
+  const N = Math.min(95, Math.floor(innerWidth/13));
+  for(let i=0;i<N;i++){
+    const ang = Math.random()*Math.PI*2;
+    const dist = (Math.random()**0.6) * Math.max(W,H)*0.55 + 60*DPR;
+    const bx = c.x + Math.cos(ang)*dist;
+    const by = c.y + Math.sin(ang)*dist;
+    nodes.push({
+      bx, by,            /* home position */
+      x:bx, y:by,        /* current position */
+      vx:0, vy:0,        /* velocity (physics) */
+      ph: Math.random()*Math.PI*2,
+      sp: .2 + Math.random()*.5,
+      amp: (8+Math.random()*22)*DPR,
+      r: (1+Math.random()*1.6)*DPR,
+      glow: 0            /* excitation level 0→1 */
+    });
+  }
+}
+
+/* ——— pointer events ——— */
+function setPtr(cx, cy){
+  ptr.px = ptr.x; ptr.py = ptr.y;
+  ptr.x = cx*DPR; ptr.y = cy*DPR;
+  ptr.vx = ptr.x - ptr.px;
+  ptr.vy = ptr.y - ptr.py;
+  ptr.active = true;
+}
+addEventListener('pointermove', e => setPtr(e.clientX, e.clientY), {passive:true});
+addEventListener('pointerdown', e => {
+  setPtr(e.clientX, e.clientY);
+  /* tap → synaptic ripple */
+  ripples.push({x:ptr.x, y:ptr.y, r:0, max:Math.max(W,H)*0.45, a:1});
+}, {passive:true});
+addEventListener('pointerup',   () => { ptr.active=false; ptr.x=ptr.px=-9999; ptr.y=ptr.py=-9999; }, {passive:true});
+addEventListener('pointerleave',() => { ptr.active=false; ptr.x=ptr.px=-9999; ptr.y=ptr.py=-9999; }, {passive:true});
+addEventListener('touchend',    () => { ptr.active=false; ptr.x=ptr.px=-9999; ptr.y=ptr.py=-9999; }, {passive:true});
+
+function draw(){
+  t += 0.008;
+  ctx.clearRect(0,0,W,H);
+  const c = logoCenter();
+  const touchR = 190*DPR;          /* radius of finger influence */
+
+  /* ——— physics update ——— */
+  for(const n of nodes){
+    /* ambient drift target */
+    const tx = n.bx + Math.cos(t*n.sp + n.ph)*n.amp;
+    const ty = n.by + Math.sin(t*n.sp*1.3 + n.ph)*n.amp;
+
+    /* spring back toward drift target */
+    n.vx += (tx - n.x)*0.012;
+    n.vy += (ty - n.y)*0.012;
+
+    /* finger repulsion + excitation */
+    const dx = n.x - ptr.x, dy = n.y - ptr.y;
+    const d = Math.hypot(dx,dy);
+    if(d < touchR && d > 0.001){
+      const f = (1 - d/touchR);
+      n.vx += (dx/d) * f * 3.4*DPR;
+      n.vy += (dy/d) * f * 3.4*DPR;
+      /* drag of the finger pulls them along slightly */
+      n.vx += ptr.vx * f * 0.06;
+      n.vy += ptr.vy * f * 0.06;
+      n.glow = Math.min(1, n.glow + f*0.25);
+    }
+
+    /* ripple shockwaves */
+    for(const rp of ripples){
+      const rdx = n.x - rp.x, rdy = n.y - rp.y;
+      const rd = Math.hypot(rdx,rdy);
+      const band = 60*DPR;
+      if(Math.abs(rd - rp.r) < band && rd > 0.001){
+        const f = (1 - Math.abs(rd - rp.r)/band) * rp.a;
+        n.vx += (rdx/rd) * f * 2.6*DPR;
+        n.vy += (rdy/rd) * f * 2.6*DPR;
+        n.glow = Math.min(1, n.glow + f*0.5);
+      }
+    }
+
+    /* damping + integrate */
+    n.vx *= 0.88; n.vy *= 0.88;
+    n.x += n.vx;  n.y += n.vy;
+    n.glow *= 0.94;
+  }
+
+  /* ripple update */
+  for(const rp of ripples){ rp.r += 9*DPR; rp.a *= 0.965; }
+  ripples = ripples.filter(rp => rp.a > 0.03 && rp.r < rp.max);
+
+  /* ——— draw connections ——— */
+  const seuil = 150*DPR;
+  ctx.lineWidth = DPR*0.6;
+  for(let i=0;i<nodes.length;i++){
+    const a1 = nodes[i];
+    for(let j=i+1;j<nodes.length;j++){
+      const a2 = nodes[j];
+      const dx=a1.x-a2.x, dy=a1.y-a2.y;
+      const d=Math.hypot(dx,dy);
+      if(d<seuil){
+        const g = Math.max(a1.glow, a2.glow);
+        const a=(1-d/seuil)*(0.16 + g*0.5);
+        ctx.strokeStyle=`rgba(125,249,255,${a})`;
+        ctx.beginPath();ctx.moveTo(a1.x,a1.y);ctx.lineTo(a2.x,a2.y);ctx.stroke();
+      }
+    }
+    /* link to the logo (the source) */
+    const dx=a1.x-c.x, dy=a1.y-c.y, d=Math.hypot(dx,dy);
+    if(d < 320*DPR){
+      const a=(1-d/(320*DPR))*(0.12 + a1.glow*0.3);
+      ctx.strokeStyle=`rgba(255,255,255,${a})`;
+      ctx.beginPath();ctx.moveTo(a1.x,a1.y);ctx.lineTo(c.x,c.y);ctx.stroke();
+    }
+  }
+
+  /* finger = temporary super-neuron: bright synapses to nearby nodes */
+  if(ptr.active){
+    for(const n of nodes){
+      const d = Math.hypot(n.x-ptr.x, n.y-ptr.y);
+      if(d < touchR*1.25){
+        const a = (1 - d/(touchR*1.25))*0.55;
+        ctx.strokeStyle=`rgba(255,255,255,${a})`;
+        ctx.lineWidth = DPR*0.8;
+        ctx.beginPath();ctx.moveTo(ptr.x,ptr.y);ctx.lineTo(n.x,n.y);ctx.stroke();
+      }
+    }
+    /* halo under the finger */
+    const grad = ctx.createRadialGradient(ptr.x,ptr.y,0, ptr.x,ptr.y, 60*DPR);
+    grad.addColorStop(0,'rgba(125,249,255,0.25)');
+    grad.addColorStop(1,'rgba(125,249,255,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();ctx.arc(ptr.x,ptr.y,60*DPR,0,Math.PI*2);ctx.fill();
+  }
+
+  /* ripple rings */
+  for(const rp of ripples){
+    ctx.strokeStyle = `rgba(125,249,255,${rp.a*0.35})`;
+    ctx.lineWidth = DPR*1.2;
+    ctx.beginPath();ctx.arc(rp.x,rp.y,rp.r,0,Math.PI*2);ctx.stroke();
+  }
+
+  /* ——— draw nodes ——— */
+  for(const n of nodes){
+    const g = n.glow;
+    if(g > 0.05){
+      /* excited halo */
+      ctx.fillStyle = `rgba(125,249,255,${g*0.18})`;
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r*5,0,Math.PI*2);ctx.fill();
+    }
+    ctx.fillStyle = `rgba(${125+g*130},${249+g*6},255,${0.85})`;
+    ctx.beginPath();ctx.arc(n.x,n.y,n.r*(1+g*0.8),0,Math.PI*2);ctx.fill();
+  }
+
+  /* pulses traveling to the center (learning synapses) */
+  if(!reduced){
+    for(let k=0;k<6;k++){
+      const n = nodes[(k*13)%nodes.length];
+      const prog = ((t*0.35 + k*0.17)%1);
+      const x = n.bx + (c.x-n.bx)*prog;
+      const y = n.by + (c.y-n.by)*prog;
+      ctx.fillStyle=`rgba(255,255,255,${(1-prog)*0.9})`;
+      ctx.beginPath();ctx.arc(x,y,1.8*DPR,0,Math.PI*2);ctx.fill();
+    }
+  }
+  requestAnimationFrame(draw);
+}
+
+addEventListener('resize', resize);
+resize();
+requestAnimationFrame(draw);
+
+/* ——— Countdown to 13.04.2027 ——— */
+const cible = new Date('2027-04-13T00:00:00');
+function maj(){
+  const diff = cible - new Date();
+  if(diff <= 0){ document.getElementById('compte').textContent = 'EMERGENCE HAS BEGUN'; return; }
+  const j = Math.floor(diff/864e5);
+  const h = Math.floor(diff/36e5)%24;
+  const m = Math.floor(diff/6e4)%60;
+  const s = Math.floor(diff/1e3)%60;
+  document.getElementById('compte').textContent =
+    `T−${j} · ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+maj(); setInterval(maj,1000);
+</script>
+</body>
+</html>
